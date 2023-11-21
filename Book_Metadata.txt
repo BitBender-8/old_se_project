@@ -9,3 +9,4 @@ Print Version, - whether its Hardcover or not
 Price,
 Quantity,
 Genre, 
+Language,

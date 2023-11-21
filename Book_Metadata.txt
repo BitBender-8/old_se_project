@@ -1,0 +1,11 @@
+Title,
+ISBN,
+Author,
+Coverpage,
+Synopsis,
+Publisher,
+Publication date,
+Print Version, - whether its Hardcover or not
+Price,
+Quantity,
+Genre, 

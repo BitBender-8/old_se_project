@@ -2,8 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = 3001;
-
-app.use(cors());
+const { Pool, Client } = require('pg');
 
 const data = [
   {
@@ -148,10 +147,37 @@ const data = [
   },
 ];
 
+const pool = new Pool({
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT
+});
+
+app.use(cors());
+
 app.get("/", (req, res) => {
-  res.json(data);
+  res.json({ message: "Welcome to the book API!" });
+});
+
+app.get("/search", async (req, res) => {
+  try {
+    // Build the query with parameterized queries
+    const { title, author, isbn } = req.query;
+    const query = 'SELECT * FROM book WHERE ($1::text IS NULL OR title ILIKE $1) AND ($2::text IS NULL OR author = $2) AND ($3::text IS NULL OR isbn = $3)';
+    
+    // Use parameterized queries to prevent SQL injection
+    const { rows } = await pool.query(query, [title, author, isbn]);
+    
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while searching for books." });
+  }
 });
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+

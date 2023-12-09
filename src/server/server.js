@@ -148,11 +148,11 @@ const data = [
 ];
 
 const pool = new Pool({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT
+  user: "postgres",
+  host: "localhost",
+  database: "y3_se_project",
+  password: "password",
+  port: "5432"
 });
 
 app.use(cors());
@@ -161,16 +161,25 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the book API!" });
 });
 
-app.get("/search", async (req, res) => {
+app.get("/search/:searchTerm", async (req, res) => {
   try {
     // Build the query with parameterized queries
-    const { title, author, isbn } = req.query;
-    const query = 'SELECT * FROM book WHERE ($1::text IS NULL OR title ILIKE $1) AND ($2::text IS NULL OR author = $2) AND ($3::text IS NULL OR isbn = $3)';
+    const queryTerm = req.params.searchTerm;
+    const query = "SELECT * FROM book WHERE (title ILIKE $1 OR title ILIKE $2 OR title ILIKE $3)\
+                   OR (authors ILIKE $1 OR authors ILIKE $2 OR authors ILIKE $3)";
     
     // Use parameterized queries to prevent SQL injection
-    const { rows } = await pool.query(query, [title, author, isbn]);
+    const { rows } = await pool.query(query, [`%${queryTerm}%`, `${queryTerm}%`, `%${queryTerm}`]);
     
-    res.json(rows);
+    console.log(rows);
+    res.status(200).json({
+      status: "success",
+      data: {
+        results: rows,
+        length: rows.length    
+      }
+    });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "An error occurred while searching for books." });

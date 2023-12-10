@@ -14,7 +14,7 @@ const BookCard = ({ value }) => {
       </div>
       <h2 className="">{value.title}</h2>
       <p>
-        by {value.author} | Date: {value.publication_date} | ISBN: {value.ISBN} | {value.genre}
+        by {value.authors} | Date: {value.publication_date} | ISBN: {value.isbn} | {value.genre}
       </p>
       <p>Rating: {value.rating}</p>
 

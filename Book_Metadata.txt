@@ -10,6 +10,6 @@ Print Version, - whether its Hardcover or not
 Price,
 Quantity,
 Genre-english, Genre-amharic, 
-Language,   This is the book language not the site language
+Language,   This is the book language not the metadata language
 Rating,
 
